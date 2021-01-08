@@ -1,0 +1,13 @@
+name = "MTHE493"
+uuid = "904d4021-4f3b-4da1-8e4c-b3c0dda79d50"
+authors = ["Ethan Morris", "Luke Steenge", "Nicholas Wallgren", "Adam Pukier", "Rachel Bouwer"]
+version = "0.1.0"
+
+[compat]
+julia = "1"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]

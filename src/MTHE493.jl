@@ -1,3 +1,4 @@
+
 module MTHE493
 
 using Images
@@ -22,5 +23,7 @@ export  load_image,
         eigenface_rep_to_image,
         euclidean_distance,
         k_nearest_neighbour,
-        test_model,
+        test_model
+
+
 end

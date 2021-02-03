@@ -7,7 +7,7 @@ function PCA(X)
     e, EV = eigen(M)
     tmp = (X*EV)'
     V = tmp[end:-1:1,:]
-    S = reverse(sqrt.(e))
+    S = reverse(sqrt.(abs.(e)))
     for i in 1:size(V, 2)
         V[:,i] ./= S
     end
@@ -21,7 +21,7 @@ end
 
 
 function image_to_eigenface_rep(image, proj, mean_vec)
-    proj'*(reshape(convert(Array{Float64}, img), :, 1) - mean_vec)
+    proj'*(reshape(convert(Array{Float64}, image), :, 1) - mean_vec)
 end
 
 

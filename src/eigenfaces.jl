@@ -1,13 +1,20 @@
 
 
 function PCA(X)
+    #get mean matrix of data
     mean_vec = mean(X, dims=2)
+    #mormalize the data
     X = X .- mean_vec
+    #compute covariance matrix
     M = X'*X
+    #compute eigenvalues
     e, EV = eigen(M)
+    #generate eigenvectors
     tmp = (X*EV)'
     V = tmp[end:-1:1,:]
+    #generate vector of absolute value of eigenvalues
     S = reverse(sqrt.(abs.(e)))
+    #order by size of eigenvalue?
     for i in 1:size(V, 2)
         V[:,i] ./= S
     end

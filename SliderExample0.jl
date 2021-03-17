@@ -82,32 +82,70 @@ R_eig_vect, R_mean_face = get_projection(images_to_image_matrix(right_side), 10)
 
 test_image_dir = "./data/really_small_testing/"
 test_images = load_images(test_image_dir; dims=dims)
-test_anglePCA(left_side,left_label,L_eig_vect,L_mean_face, right_side, right_label, R_eig_vect, R_mean_face, eig_vect, test_images, mean_face, 10, 1)
+d = 10
+k=1
 
-function test_anglePCA(left_side, left_label, left_proj, L_mean_face, right_side, right_label, right_proj, R_mean_face, proj, images, mean_face, d, k)
-    img = map(x->x[1],images)
-    label = map(x->x[2], images)
+img = map(x->x[1],test_images)
+test_label = map(x->x[2], test_images)
+
     #convert image data into matrix
-    image_matrix_left = images_to_image_matrix(left_side)
-    transformed_left = transpose(transpose(left_proj[:,1:d])*image_matrix_left)
+image_matrix_left = images_to_image_matrix(left_side)
+transformed_left = transpose(transpose(L_eig_vect[:,1:d])*image_matrix_left)
 
 
-    image_matrix_right = images_to_image_matrix(right_side)
-    transformed_right = transpose(transpose(right_proj[:,1:d])*image_matrix_right)
+image_matrix_right = images_to_image_matrix(right_side)
+transformed_right = transpose(transpose(R_eig_vect[:,1:d])*image_matrix_right)
+
     #testing
-    correct = 0
-    for i in 1:4
-        test_eigface = image_to_eigenface_rep(img[i], proj, mean_face)
-        angle_value = test_eigface[1]
-        if angle_value >= 0
-            if k_nearest_neighbour(transformed_left, test_eigface[2], k) == test_eigface[1]
-                correct = correct + 1
-            end
+
+
+
+correct = 0
+for i in 1:4
+    test_eigface = image_to_eigenface_rep(img[i], eig_vect, mean_face)
+    angle_value = test_eigface[1]
+    if angle_value >= 0
+        if nearest_neighbour(transformed_left, left_label, test_eigface) == parse(Float64, test_label[i])
+            correct = correct + 1
         else
-            if k_nearest_neighbour(transformed_right, test_eigface[2], k) == test_eigface[1]
-                correct = correct + 1
-            end
+            print("Left:")
+            print(test_label[i])
+            print(" identified as ")
+            print(nearest_neighbour(transformed_left, left_label, test_eigface))
+            print("\n")
+        end
+    else
+        if nearest_neighbour(transformed_right, right_label, test_eigface) == parse(Float64, test_label[i])
+            correct = correct + 1
+        else
+            print("Right:")
+            print(test_label[i])
+            print(" identified as ")
+            print(nearest_neighbour(transformed_left, left_label, test_eigface))
+            print("\n")
         end
     end
-    return correct/length(images)
+end
+
+
+correct
+
+
+
+
+
+function nearest_neighbour(eigenface_table,label, new_eigenface)
+    n=25
+    min_label= label[1]
+    min_dist = euclidean_distance(eigenface_table[1], new_eigenface)
+    for i in 1:n
+        distance = euclidean_distance(eigenface_table[i], new_eigenface)
+        if min_dist>=distance
+            min_dist=distance
+            min_label = label[i]
+        end
+    end
+
+
+    return min_label
 end
